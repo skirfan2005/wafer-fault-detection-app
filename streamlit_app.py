@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import time
 
-from src.pipeline.train_pipeline import TraininingPipeline
+#from src.pipeline.train_pipeline import TraininingPipeline
 from src.pipeline.test_pipeline import PredictionPipeline
 
 # ----------------------------
@@ -42,11 +42,11 @@ st.markdown("""
 # 📌 Sidebar
 # ----------------------------
 st.sidebar.title("⚡ Fault Detection")
-menu = st.sidebar.radio(
-    "Navigation",
-    ["Dashboard", "Train Model", "Predict"],
-    label_visibility="collapsed"
-)
+# menu = st.sidebar.radio(
+#     "Navigation",
+#     ["Dashboard", "Train Model", "Predict"],
+#     label_visibility="collapsed"
+# )
 
 # ----------------------------
 # 🏠 DASHBOARD
