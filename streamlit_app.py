@@ -113,19 +113,8 @@ elif menu == "Predict":
         df = pd.read_csv(uploaded_file)
 
         st.subheader("📄 Data Preview")
-        # Get columns
-        cols = df.columns
         
-        if len(cols) > 4:
-            preview_df = pd.concat([
-                df.iloc[:, :2],  # first 2 columns
-                pd.DataFrame({"...": ["..."] * len(df)}),  # dots column
-                df.iloc[:, -2:]  # last 2 columns
-            ], axis=1)
-        else:
-            preview_df = df
-        
-        st.dataframe(preview_df)
+        st.dataframe(df)
 
         if st.button("⚡ Run Prediction"):
             with st.spinner("Running model..."):
@@ -141,7 +130,19 @@ elif menu == "Predict":
                     st.success("✅ Prediction Complete!")
 
                     st.subheader("📊 Results")
-                    st.dataframe(output_df)
+                    # Get columns
+                    cols = output_df.columns
+                    
+                    if len(cols) > 4:
+                        preview_df = pd.concat([
+                            output_df.iloc[:, :2],  # first 2 columns
+                            pd.DataFrame({"...": ["..."] * len(output_df)}),  # dots column
+                            output_df.iloc[:, -2:]  # last 2 columns
+                        ], axis=1)
+                    else:
+                        preview_df = output_df
+                    
+                    st.dataframe(preview_df)
 
                     # ✅ Download button
                     with open(result.prediction_file_path, "rb") as f:
