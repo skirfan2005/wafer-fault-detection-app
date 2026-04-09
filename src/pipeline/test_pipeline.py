@@ -33,24 +33,21 @@ class PredictionPipeline:
     # 🤖 Prediction + SHAP Explainability
     # -----------------------------
     def predict(self, features: pd.DataFrame):
-    try:
-        model = self.utils.load_object(os.path.join(artifact_folder, "model.pkl"))
-        preprocessor = self.utils.load_object(os.path.join(artifact_folder, "preprocessor.pkl"))
-
-        transformed_x = preprocessor.transform(features)
-        preds = model.predict(transformed_x)
-
-        # No SHAP (lightweight deployment)
-        explanations = ["Not Available"] * len(preds)
-
-        return preds, explanations
-
-    except Exception as e:
-        raise CustomException(e, sys)
+        try:
+            model = self.utils.load_object(os.path.join(artifact_folder, "model.pkl"))
+            preprocessor = self.utils.load_object(os.path.join(artifact_folder, "preprocessor.pkl"))
+    
+            transformed_x = preprocessor.transform(features)
+            preds = model.predict(transformed_x)
+    
+            # No SHAP (lightweight deployment)
+            explanations = ["Not Available"] * len(preds)
+    
             return preds, explanations
-
+    
         except Exception as e:
             raise CustomException(e, sys)
+                return preds, explanations
 
     # -----------------------------
     # 📊 Create Output File
