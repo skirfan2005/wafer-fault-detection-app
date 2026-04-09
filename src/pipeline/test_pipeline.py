@@ -1,7 +1,7 @@
 import os, sys
 import pandas as pd
 import numpy as np
-import shap
+#import shap
 
 from src.logger import logging
 from src.exception import CustomException
@@ -33,41 +33,20 @@ class PredictionPipeline:
     # 🤖 Prediction + SHAP Explainability
     # -----------------------------
     def predict(self, features: pd.DataFrame):
-        try:
-            model = self.utils.load_object(os.path.join(artifact_folder, "model.pkl"))
-            preprocessor = self.utils.load_object(os.path.join(artifact_folder, "preprocessor.pkl"))
+    try:
+        model = self.utils.load_object(os.path.join(artifact_folder, "model.pkl"))
+        preprocessor = self.utils.load_object(os.path.join(artifact_folder, "preprocessor.pkl"))
 
-            transformed_x = preprocessor.transform(features)
-            preds = model.predict(transformed_x)
+        transformed_x = preprocessor.transform(features)
+        preds = model.predict(transformed_x)
 
-            explanations = []
+        # No SHAP (lightweight deployment)
+        explanations = ["Not Available"] * len(preds)
 
-            try:
-                explainer = shap.TreeExplainer(model)
-                shap_values = explainer.shap_values(transformed_x)
+        return preds, explanations
 
-                if isinstance(shap_values, list):
-                    vals = shap_values[1]
-                else:
-                    vals = shap_values
-
-                for i, prediction in enumerate(preds):
-                    if prediction == 0:
-                        row_values = vals[i]
-                        top_feature_idx = np.argmax(row_values)
-                        top_feature_impact = row_values[top_feature_idx]
-
-                        feature_name = features.columns[top_feature_idx]
-                        reason = f"{feature_name} (Impact: {top_feature_impact:.2f})"
-
-                        explanations.append(reason)
-                    else:
-                        explanations.append("N/A (Good Wafer)")
-
-            except Exception as e:
-                logging.info(f"SHAP Error: {str(e)}")
-                explanations = ["Explanation Unavailable"] * len(preds)
-
+    except Exception as e:
+        raise CustomException(e, sys)
             return preds, explanations
 
         except Exception as e:
