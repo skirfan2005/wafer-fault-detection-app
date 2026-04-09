@@ -47,7 +47,10 @@ st.sidebar.title("⚡ Fault Detection")
 #     ["Dashboard", "Train Model", "Predict"],
 #     label_visibility="collapsed"
 # )
-
+menu = st.sidebar.radio(
+    "Navigation",
+    ["Dashboard", "Predict"]
+)
 # ----------------------------
 # 🏠 DASHBOARD
 # ----------------------------
