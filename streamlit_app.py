@@ -163,8 +163,8 @@ elif menu == "Predict":
                     # ----------------------------
                     # 🔍 Row-wise SHAP View
                     # ----------------------------
-                   st.subheader("🔍 Inspect Individual Prediction")
-
+                    st.subheader("🔍 Inspect Individual Prediction")
+                    
                     # Initialize session state
                     if "selected_index" not in st.session_state:
                         st.session_state.selected_index = 0
@@ -182,7 +182,7 @@ elif menu == "Predict":
                     
                     # Show result
                     st.write("Prediction:", output_df.iloc[selected]["quality"])
-                    st.write("Root Cause:", output_df.iloc[selected]["Root_Cause_Analysis"]))
+                    st.write("Root Cause:", output_df.iloc[selected]["Root_Cause_Analysis"])
 
                     # ----------------------------
                     # 📥 Download
