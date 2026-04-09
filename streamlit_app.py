@@ -41,7 +41,7 @@ st.markdown("""
 # ----------------------------
 # 📌 Sidebar
 # ----------------------------
-st.sidebar.title("⚡ Fault Detection")
+st.sidebar.title("⚡Fault Detection ")
 # menu = st.sidebar.radio(
 #     "Navigation",
 #     ["Dashboard", "Train Model", "Predict"],
@@ -55,7 +55,7 @@ menu = st.sidebar.radio(
 # 🏠 DASHBOARD
 # ----------------------------
 if menu == "Dashboard":
-    st.title("⚡ Fault Detection System")
+    st.title("⚡Wafer Fault Detection System")
 
     col1, col2, col3 = st.columns(3)
 
@@ -151,7 +151,13 @@ elif menu == "Predict":
                     # ----------------------------
                     st.subheader("📈 Summary")
 
-                    counts = output_df["prediction"].value_counts()
+                    counts = output_df["quality"].value_counts()
+                    
+                    col1, col2 = st.columns(2)
+                    
+                    col1.metric("Bad Wafers", int(counts.get("bad", 0)))
+                    col2.metric("Good Wafers", int(counts.get("good", 0)))
+                    
                     st.bar_chart(counts)
 
                     # ----------------------------
