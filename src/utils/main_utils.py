@@ -3,8 +3,8 @@ from typing import Dict, Tuple
 import os
 import pandas as pd
 import pickle
-import yaml
-import boto3
+# import yaml
+# import boto3
 
 from src.constant import *
 from src.exception import CustomException
