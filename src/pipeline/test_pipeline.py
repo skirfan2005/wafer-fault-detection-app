@@ -40,8 +40,36 @@ class PredictionPipeline:
             transformed_x = preprocessor.transform(features)
             preds = model.predict(transformed_x)
     
-            # No SHAP (lightweight deployment)
-            explanations = ["Not Available"] * len(preds)
+            explanations = []
+    
+            try:
+                import shap  # lazy import
+    
+                explainer = shap.TreeExplainer(model)
+                shap_values = explainer.shap_values(transformed_x)
+    
+                if isinstance(shap_values, list):
+                    vals = shap_values[1]
+                else:
+                    vals = shap_values
+    
+                for i in range(len(features)):
+                    row_vals = vals[i]
+    
+                    # Top 3 features by impact
+                    top_indices = np.argsort(np.abs(row_vals))[-3:][::-1]
+    
+                    reasons = []
+                    for idx in top_indices:
+                        feature_name = features.columns[idx]
+                        impact = row_vals[idx]
+                        reasons.append(f"{feature_name} ({impact:.2f})")
+    
+                    explanations.append(" | ".join(reasons))
+    
+            except Exception as e:
+                logging.info(f"SHAP failed: {str(e)}")
+                explanations = ["Explanation unavailable"] * len(preds)
     
             return preds, explanations
     
