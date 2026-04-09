@@ -172,7 +172,7 @@ elif menu == "Predict":
                         0
                     )
 
-                    st.write("Prediction:", output_df.iloc[idx]["prediction"])
+                    st.write("Prediction:", output_df.iloc[idx]["quality"])
                     st.write("Root Cause:", output_df.iloc[idx]["Root_Cause_Analysis"])
 
                     # ----------------------------
