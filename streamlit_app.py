@@ -107,14 +107,13 @@ elif menu == "Train Model":
 elif menu == "Predict":
     st.title("🔍 Prediction Center")
 
-    uploaded_file = st.file_uploader("📂 Upload CSV File", type=["csv"])
+    uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
 
     if uploaded_file:
         df = pd.read_csv(uploaded_file)
 
         st.subheader("📄 Data Preview")
-        
-        st.dataframe(df)
+        st.dataframe(df.head())
 
         if st.button("⚡ Run Prediction"):
             with st.spinner("Running model..."):
@@ -122,35 +121,69 @@ elif menu == "Predict":
                     temp_path = "temp.csv"
                     df.to_csv(temp_path, index=False)
 
-                    prediction_pipeline = PredictionPipeline(temp_path)
-                    result = prediction_pipeline.run_pipeline()
+                    pipeline = PredictionPipeline(temp_path)
+                    result = pipeline.run_pipeline()
 
                     output_df = pd.read_csv(result.prediction_file_path)
 
                     st.success("✅ Prediction Complete!")
 
-                    st.subheader("📊 Results")
-                    # Get columns
+                    # ----------------------------
+                    # 📊 Clean Preview
+                    # ----------------------------
+                    st.subheader("📊 Result Preview")
+
                     cols = output_df.columns
-                    
+
                     if len(cols) > 4:
                         preview_df = pd.concat([
-                            output_df.iloc[:, :2],  # first 2 columns
-                            pd.DataFrame({"...": ["..."] * len(output_df)}),  # dots column
-                            output_df.iloc[:, -2:]  # last 2 columns
+                            output_df.iloc[:, :2],
+                            pd.DataFrame({"...": ["..."] * len(output_df)}),
+                            output_df.iloc[:, -2:]
                         ], axis=1)
                     else:
                         preview_df = output_df
-                    
+
                     st.dataframe(preview_df)
 
-                    # ✅ Download button
+                    # ----------------------------
+                    # 📈 Summary
+                    # ----------------------------
+                    st.subheader("📈 Summary")
+
+                    counts = output_df["prediction"].value_counts()
+                    st.bar_chart(counts)
+
+                    # ----------------------------
+                    # 🔍 Row-wise SHAP View
+                    # ----------------------------
+                    st.subheader("🔍 Inspect Individual Prediction")
+
+                    idx = st.number_input(
+                        "Select row index",
+                        0,
+                        len(output_df)-1,
+                        0
+                    )
+
+                    st.write("Prediction:", output_df.iloc[idx]["prediction"])
+                    st.write("Root Cause:", output_df.iloc[idx]["Root_Cause_Analysis"])
+
+                    # ----------------------------
+                    # 📥 Download
+                    # ----------------------------
                     with open(result.prediction_file_path, "rb") as f:
                         st.download_button(
-                            "📥 Download Results",
+                            "📥 Download Full Results",
                             f,
                             file_name="predictions.csv"
                         )
+
+                    # ----------------------------
+                    # 📂 Full Data
+                    # ----------------------------
+                    with st.expander("See full results"):
+                        st.dataframe(output_df)
 
                 except Exception as e:
                     st.error(str(e))
