@@ -1,0 +1,140 @@
+import streamlit as st
+import pandas as pd
+import time
+
+from src.pipeline.train_pipeline import TraininingPipeline
+from src.pipeline.test_pipeline import PredictionPipeline
+
+# ----------------------------
+# ⚙️ Page Config
+# ----------------------------
+st.set_page_config(
+    page_title="Wafer Fault Detection System Dashboard",
+    page_icon="⚡",
+    layout="wide"
+)
+
+# ----------------------------
+# 🎨 Custom CSS (IMPORTANT)
+# ----------------------------
+st.markdown("""
+    <style>
+        .main {
+            background-color: #0e1117;
+        }
+        .stButton>button {
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 10px;
+            height: 3em;
+            width: 100%;
+        }
+        .card {
+            padding: 20px;
+            border-radius: 15px;
+            background-color: #1c1f26;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# ----------------------------
+# 📌 Sidebar
+# ----------------------------
+st.sidebar.title("⚡ Fault Detection")
+menu = st.sidebar.radio(
+    "Navigation",
+    ["Dashboard", "Train Model", "Predict"],
+    label_visibility="collapsed"
+)
+
+# ----------------------------
+# 🏠 DASHBOARD
+# ----------------------------
+if menu == "Dashboard":
+    st.title("⚡ Fault Detection System")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown('<div class="card">📊 <b>Model Status</b><br>Ready</div>', unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="card">📁 <b>Dataset</b><br>Available</div>', unsafe_allow_html=True)
+
+    with col3:
+        st.markdown('<div class="card">⚙️ <b>Pipeline</b><br>Idle</div>', unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    st.subheader("📌 About Project")
+    st.write("""
+    This system detects faults using machine learning.
+    
+    - Train model on dataset  
+    - Upload new data  
+    - Get predictions instantly  
+    """)
+
+# ----------------------------
+# 🧠 TRAIN MODEL
+# ----------------------------
+elif menu == "Train Model":
+    st.title("🧠 Model Training")
+
+    st.write("Click below to train the model")
+
+    if st.button("🚀 Start Training"):
+        progress = st.progress(0)
+
+        for i in range(100):
+            time.sleep(0.02)
+            progress.progress(i + 1)
+
+        try:
+            pipeline = TraininingPipeline()
+            pipeline.run_pipeline()
+            st.success("✅ Model trained successfully!")
+        except Exception as e:
+            st.error(f"❌ Error: {e}")
+
+# ----------------------------
+# 🔍 PREDICTION
+# ----------------------------
+elif menu == "Predict":
+    st.title("🔍 Prediction Center")
+
+    uploaded_file = st.file_uploader("📂 Upload CSV File", type=["csv"])
+
+    if uploaded_file:
+        df = pd.read_csv(uploaded_file)
+
+        st.subheader("📄 Data Preview")
+        st.dataframe(df)
+
+        if st.button("⚡ Run Prediction"):
+            with st.spinner("Running model..."):
+                try:
+                    temp_path = "temp.csv"
+                    df.to_csv(temp_path, index=False)
+
+                    prediction_pipeline = PredictionPipeline(temp_path)
+                    result = prediction_pipeline.run_pipeline()
+
+                    output_df = pd.read_csv(result.prediction_file_path)
+
+                    st.success("✅ Prediction Complete!")
+
+                    st.subheader("📊 Results")
+                    st.dataframe(output_df)
+
+                    # ✅ Download button
+                    with open(result.prediction_file_path, "rb") as f:
+                        st.download_button(
+                            "📥 Download Results",
+                            f,
+                            file_name="predictions.csv"
+                        )
+
+                except Exception as e:
+                    st.error(str(e))

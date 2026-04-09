@@ -1,0 +1,41 @@
+model_selection:
+  model:
+    XGBClassifier:
+      search_param_grid:
+        # Aggressive weights to force High Recall
+        scale_pos_weight: 
+           - 25
+           - 50
+        learning_rate: 
+           - 0.01
+           - 0.001
+        max_depth: 
+           - 3
+           - 5
+        n_estimators: 
+           - 100
+           - 200
+           
+    RandomForestClassifier:
+      search_param_grid:
+        class_weight:
+           - balanced
+        n_estimators: 
+           - 100
+           - 200
+        max_depth: 
+           - 5
+           - 10
+        min_samples_leaf: 
+           - 2
+           - 4
+
+    SVC:
+      search_param_grid:
+        class_weight:
+           - balanced
+        C: 
+           - 1
+           - 10
+        kernel: 
+           - rbf
