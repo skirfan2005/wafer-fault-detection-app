@@ -161,23 +161,6 @@ elif menu == "Predict":
                     st.bar_chart(counts)
 
                     # ----------------------------
-                    # 🔍 Row-wise SHAP View
-                    # ----------------------------
-                    st.subheader("🔍 Inspect Individual Prediction")
-
-                    # Input only (no display yet)
-                    selected = st.number_input(
-                        "Select row index",
-                        0,
-                        len(output_df) - 1,
-                        0
-                    )
-                    
-                    # Button controls update
-                    if st.button("Show Details"):
-                        st.write("Prediction:", output_df.iloc[selected]["quality"])
-                        st.write("Root Cause:", output_df.iloc[selected]["Root_Cause_Analysis"])
-                    # ----------------------------
                     # 📥 Download
                     # ----------------------------
                     with open(result.prediction_file_path, "rb") as f:
