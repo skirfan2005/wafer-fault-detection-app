@@ -47,7 +47,7 @@ class PredictionPipeline:
     
         except Exception as e:
             raise CustomException(e, sys)
-                return preds, explanations
+            
 
     # -----------------------------
     # 📊 Create Output File
